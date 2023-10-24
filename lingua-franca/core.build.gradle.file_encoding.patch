@@ -1,0 +1,13 @@
+diff --git a/core/build.gradle b/core/build.gradle
+index 142c347e0..1e625ff28 100644
+--- a/core/build.gradle
++++ b/core/build.gradle
+@@ -159,3 +159,8 @@ tasks.register('checkRuntimeVersionFileUpToDate') {
+     }
+ }
+ test.dependsOn('checkRuntimeVersionFileUpToDate')
++
++// Set encoding
++compileJava.options.encoding = 'UTF-8'
++compileTestJava.options.encoding = 'UTF-8'
++javadoc.options.encoding = 'UTF-8'
