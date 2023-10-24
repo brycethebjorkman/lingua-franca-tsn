@@ -23,6 +23,8 @@ WORKDIR /usr/app/lingua-franca
 # copy the project files over to container
 COPY ./lingua-franca .
 
+RUN bin/lfc-dev --version
+
 ENTRYPOINT bash
 
 # start with `podman run -it --rm lingua-franca`
