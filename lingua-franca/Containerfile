@@ -25,6 +25,8 @@ COPY ./lingua-franca .
 
 RUN bin/lfc-dev --version
 
+ENV PATH="${PATH}:/usr/app/lingua-franca/build/install/lf-cli/bin"
+
 ENTRYPOINT bash
 
 # start with `podman run -it --rm lingua-franca`
