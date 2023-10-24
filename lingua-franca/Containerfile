@@ -18,10 +18,10 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     openjdk-17-jdk \
     && apt-get clean
 
-WORKDIR /usr/app
+WORKDIR /usr/app/lingua-franca
 
 # copy the project files over to container
-COPY ./ /usr/app
+COPY ./lingua-franca .
 
 ENTRYPOINT bash
 
