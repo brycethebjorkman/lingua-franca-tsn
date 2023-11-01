@@ -1,2 +1,5 @@
 .settings/
 .nedexclusions
+out/
+src/Makefile
+src/lingua-franca-tsn_dbg
