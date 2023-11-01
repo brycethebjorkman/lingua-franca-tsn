@@ -10,6 +10,9 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
 
 WORKDIR /usr/app
 
+# remove the source code for the lingua-franca test projects to prevent the lfc tool from seeing them as conflicts
+RUN rm -r lingua-franca/test
+
 # copy the project files over to container
 COPY ./ /usr/app
 
