@@ -1,7 +1,12 @@
 # run `podman build -t lingua-franca-tsn --no-cache --pull .` to keep everything on latest
 
 # base on the latest lingua-franca container image
-FROM lingua-franca:latest
+FROM lingua-franca:latest AS base
+
+FROM docker.io/omnetpp/inet:o6.0-4.4.1
+
+# copy lingua-franca artifacts over
+COPY --from=base /usr/app /usr/app
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     clang \
@@ -10,6 +15,23 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     git \
+    && apt-get clean
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    python3 \
+    && apt-get clean
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    openjdk-17-jre \
+    openjdk-17-jdk \
+    && apt-get clean
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    vim \
+    && apt-get clean
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    iproute2 \
     && apt-get clean
 
 WORKDIR /usr/app
@@ -27,6 +49,8 @@ RUN rm -r lingua-franca/test
 
 # copy the project files over to container
 COPY ./ /usr/app
+
+ENV PATH="${PATH}:/usr/app/lingua-franca/build/install/lf-cli/bin"
 
 ENTRYPOINT bash
 
