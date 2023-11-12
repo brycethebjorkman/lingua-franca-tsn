@@ -1,3 +1,5 @@
 .*
 Containerfile
 lingua-franca
+lingua-franca-tsn/out/*
+lingua-franca-tsn/src/*
