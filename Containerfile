@@ -1,12 +1,39 @@
 # run `podman build -t lingua-franca-tsn --no-cache --pull .` to keep everything on latest
 
 # base on the latest lingua-franca container image
-FROM lingua-franca:latest AS base
+FROM lingua-franca:latest AS lf
 
-FROM docker.io/omnetpp/inet:o6.0-4.4.1
+# based on the [omnettpp inet dockerfile](https://github.com/omnetpp/dockerfiles/blob/master/inet/Dockerfile)
+FROM ghcr.io/omnetpp/omnetpp:u22.04-6.0 as base
+
+# first stage - build inet
+FROM base as builder
+ARG VERSION=4.5.2
+WORKDIR /root
+RUN wget https://github.com/inet-framework/inet/releases/download/v$VERSION/inet-$VERSION-src.tgz \
+         --referer=https://omnetpp.org/ -O inet-src.tgz --progress=dot:mega && \
+         tar xf inet-src.tgz && rm inet-src.tgz
+WORKDIR /root/omnetpp
+RUN . ./setenv && cd ../inet4.5 && . ./setenv && \
+    opp_featuretool enable NetworkEmulationSupport && \
+    make makefiles && \
+    make -j $(nproc) MODE=release && \
+    rm -rf out
+
+# second stage - copy only the final binaries (to get rid of the 'out' folder and reduce the image size)
+FROM base
+RUN mkdir -p /root/inet4.5
+WORKDIR /root/inet4.5
+COPY --from=builder /root/inet4.5/ .
+ARG VERSION=4.5.2
+ENV INET_VER=$VERSION
+RUN echo 'PS1="inet-$INET_VER:\w\$ "' >> /root/.bashrc && \
+    echo '[ -f "$HOME/omnetpp/setenv" ] && source "$HOME/omnetpp/setenv" -f' >> /root/.bashrc && \
+    echo '[ -f "$HOME/inet4.5/setenv" ] && source "$HOME/inet4.5/setenv" -f' >> /root/.bashrc && \
+    touch /root/.hushlogin
 
 # copy lingua-franca artifacts over
-COPY --from=base /usr/app /usr/app
+COPY --from=lf /usr/app /usr/app
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     clang \
