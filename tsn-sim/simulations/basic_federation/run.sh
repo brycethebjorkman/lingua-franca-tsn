@@ -2,13 +2,13 @@
 
 # # some variation of this should be workable as an alternative to calling the executable OMNeT++ generates in the src directory
 # inet -u Cmdenv \
-#        -f $LINGUA_FRANCA_TSN_ROOT/lingua-franca-tsn/simulations/basic_federation/omnetpp.ini \
-#        -n $LINGUA_FRANCA_TSN_ROOT/lingua-franca-tsn/simulations \
+#        -f $LINGUA_FRANCA_TSN_ROOT/tsn-sim/simulations/basic_federation/omnetpp.ini \
+#        -n $LINGUA_FRANCA_TSN_ROOT/tsn-sim/simulations \
 #        &
 
-$LINGUA_FRANCA_TSN_ROOT/lingua-franca-tsn/src/lingua-franca-tsn -m \
-    -n $LINGUA_FRANCA_TSN_ROOT/lingua-franca-tsn/simulations \
-    -n $LINGUA_FRANCA_TSN_ROOT/lingua-franca-tsn/src \
+$LINGUA_FRANCA_TSN_ROOT/tsn-sim/src/tsn-sim -m \
+    -n $LINGUA_FRANCA_TSN_ROOT/tsn-sim/simulations \
+    -n $LINGUA_FRANCA_TSN_ROOT/tsn-sim/src \
     -n $INET_ROOT/examples \
     -n $INET_ROOT/showcases \
     -n $INET_ROOT/src \
@@ -26,7 +26,7 @@ $LINGUA_FRANCA_TSN_ROOT/lingua-franca-tsn/src/lingua-franca-tsn -m \
     -x inet.examples.voipstream \
     --image-path=$INET_ROOT/images \
     -l $INET_ROOT/src/INET \
-    $LINGUA_FRANCA_TSN_ROOT/lingua-franca-tsn/simulations/basic_federation/omnetpp.ini \
+    $LINGUA_FRANCA_TSN_ROOT/tsn-sim/simulations/basic_federation/omnetpp.ini \
     &
 
 # kill child processes

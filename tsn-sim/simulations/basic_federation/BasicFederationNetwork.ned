@@ -1,4 +1,4 @@
-package lingua_franca_tsn.simulations.basic_federation;
+package tsn_sim.simulations.basic_federation;
 
 import inet.networklayer.configurator.ipv4.Ipv4NetworkConfigurator;
 import inet.node.ethernet.Eth100M;
