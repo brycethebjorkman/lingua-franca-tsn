@@ -44,15 +44,11 @@ while true; do
     esac
 done
 
-. setenv
+PS1="inet-$INET_VER:\w\$ "
+[ -f "$HOME/omnetpp/setenv" ] && . "$HOME/omnetpp/setenv" -f
+[ -f "$HOME/inet4.5/setenv" ] && . "$HOME/inet4.5/setenv" -f
 
-BasicFederation_run() {
-    stdbuf -i 0 -o 0 -e 0 \
-    lfc src/basic-federation/BasicFederation.lf \
-        && \
-        stdbuf -i 0 -o 0 -e 0 \
-        bin/BasicFederation
-}
+. setenv
 
 generic_run() {
     bash tsn-sim/simulations/$project/build.sh
@@ -73,7 +69,7 @@ case "$project" in
         generic_run
         ;;
     basic_federation)
-        BasicFederation_run
+        generic_run
         ;;
     *)
         echo "project $project not recognized"

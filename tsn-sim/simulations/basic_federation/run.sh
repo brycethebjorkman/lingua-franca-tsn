@@ -29,5 +29,8 @@ $LINGUA_FRANCA_TSN_ROOT/tsn-sim/src/tsn-sim -m \
     $LINGUA_FRANCA_TSN_ROOT/tsn-sim/simulations/basic_federation/omnetpp.ini \
     &
 
+stdbuf -i 0 -o 0 -e 0 \
+    bin/BasicFederation
+
 # kill child processes
 trap 'kill $(jobs -pr)' SIGINT SIGTERM EXIT
