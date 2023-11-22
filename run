@@ -1,0 +1,82 @@
+#!/bin/bash
+
+usage="
+Usage:
+    $0 [options]
+
+Options:
+    -p, --project   the project to run
+    -t, --tests     run the project tests
+"
+
+usage() {
+    echo "$usage"
+}
+
+OPTIONS=$(getopt -o p:t --long project:,tests == "$@")
+
+if [ $? -ne 0 ]; then
+    usage
+    exit 1
+fi
+
+project=false
+testopt=false
+
+eval set -- "$OPTIONS"
+while true; do
+    case "$1" in
+        -p|--project)
+            project=$2
+            shift 2
+            ;;
+        -t|--tests)
+            testopt=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+. setenv
+
+BasicFederation_run() {
+    stdbuf -i 0 -o 0 -e 0 \
+    lfc src/basic-federation/BasicFederation.lf \
+        && \
+        stdbuf -i 0 -o 0 -e 0 \
+        bin/BasicFederation
+}
+
+generic_run() {
+    bash tsn-sim/simulations/$project/build.sh
+    tsn-sim/simulations/$project/setup.sh
+    if [ $testopt = true ]; then
+        bash "tsn-sim/simulations/$project/test.sh"
+    else
+        tsn-sim/simulations/$project/run.sh
+    fi
+    tsn-sim/simulations/$project/teardown.sh
+}
+
+case "$project" in
+    talker_listener)
+        generic_run
+        ;;
+    client_server)
+        generic_run
+        ;;
+    basic_federation)
+        BasicFederation_run
+        ;;
+    *)
+        echo "project $project not recognized"
+        exit 1
+        ;;
+esac
