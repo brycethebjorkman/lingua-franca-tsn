@@ -1,8 +1,105 @@
 #!/bin/bash
 
-podman run \
-    -it \
-    --rm \
-    --device /dev/net/tun:/dev/net/tun \
-    --cap-add NET_ADMIN \
-    lingua-franca-tsn
+usage="
+Usage:
+    $0 [options]
+
+Options:
+    -b, --build     build the container before starting
+    -e, --execute   execute the 'run' script automatically on startup
+"
+
+usage() {
+    echo "$usage"
+}
+
+OPTIONS=$(getopt -o be: --long build,execute: == "$@")
+
+if [ $? -ne 0 ]; then
+    usage
+    exit 1
+fi
+
+container="lingua-franca-tsn-dev"
+build=false
+execute=false
+
+eval set -- "$OPTIONS"
+while true; do
+    case "$1" in
+        -b|--build)
+            build=true
+            shift
+            ;;
+        -e|--execute)
+            execute=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+build() {
+    ./build
+}
+
+run() {
+    podman run \
+        -it \
+        --rm \
+        --device /dev/net/tun:/dev/net/tun \
+        --cap-add NET_ADMIN \
+        --name $container \
+        lingua-franca-tsn
+}
+
+execute() {
+    podman create \
+        -it \
+        --device /dev/net/tun:/dev/net/tun \
+        --cap-add NET_ADMIN \
+        --name $container \
+        lingua-franca-tsn \
+        bash
+
+    echo "Starting $container"
+
+    podman start $container
+
+    echo "Running $container..."
+
+    podman exec \
+        "$container" \
+        bash \
+        -c "./run -p $execute | tee run.log"
+        #-c "./run"
+
+    podman logs -f
+
+    echo "... done running $container."
+
+    podman exec \
+        -it \
+        "$container" \
+        bash
+
+    podman stop $container
+
+    podman rm $container
+}
+
+if [ $build = true ]; then
+    build
+fi
+
+if [ $execute = false ]; then
+    run
+else
+    execute
+fi
