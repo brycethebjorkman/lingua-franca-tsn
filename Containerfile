@@ -61,6 +61,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     iproute2 \
     && apt-get clean
 
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    openssh-client \
+    openssh-server \
+    && apt-get clean
+
 WORKDIR /usr/app
 
 # to support distributed execution, [install the lingua-franca RTI](https://www.lf-lang.org/docs/handbook/distributed-execution?target=py#installation-of-the-rti)
