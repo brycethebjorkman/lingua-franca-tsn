@@ -30,6 +30,9 @@ $LINGUA_FRANCA_TSN_ROOT/tsn-sim/src/tsn-sim -m \
     &
 
 stdbuf -i 0 -o 0 -e 0 \
+    bin/BasicFederation_distribute.sh
+
+stdbuf -i 0 -o 0 -e 0 \
     bin/BasicFederation
 
 # kill child processes
