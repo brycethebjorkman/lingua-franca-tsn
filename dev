@@ -5,15 +5,16 @@ Usage:
     $0 [options]
 
 Options:
-    -b, --build     build the container before starting
-    -e, --execute   execute the 'run' script automatically on startup
+    -b, --build             build the container before starting
+    -e, --execute string    execute the given string as a command in the container
+    -p, --project string    run the chosen project
 "
 
 usage() {
     echo "$usage"
 }
 
-OPTIONS=$(getopt -o be: --long build,execute: == "$@")
+OPTIONS=$(getopt -o be:p: --long build,execute:,project: == "$@")
 
 if [ $? -ne 0 ]; then
     usage
@@ -22,7 +23,8 @@ fi
 
 container="lingua-franca-tsn-dev"
 build=false
-execute=false
+execute=""
+project=""
 
 eval set -- "$OPTIONS"
 while true; do
@@ -33,6 +35,10 @@ while true; do
             ;;
         -e|--execute)
             execute=$2
+            shift 2
+            ;;
+        -p|--project)
+            project=$2
             shift 2
             ;;
         --)
@@ -55,51 +61,36 @@ run() {
         --rm \
         --device /dev/net/tun:/dev/net/tun \
         --cap-add NET_ADMIN \
+        --cap-add NET_RAW \
+        --cap-add SYS_ADMIN \
         --name $container \
         lingua-franca-tsn
 }
 
 execute() {
-    podman create \
+    cmd="$1"
+
+    podman run \
         -it \
+        --rm \
         --device /dev/net/tun:/dev/net/tun \
         --cap-add NET_ADMIN \
+        --cap-add NET_RAW \
+        --cap-add SYS_ADMIN \
         --name $container \
+        --entrypoint "/bin/bash" \
         lingua-franca-tsn \
-        bash
-
-    echo "Starting $container"
-
-    podman start $container
-
-    echo "Running $container..."
-
-    podman exec \
-        "$container" \
-        bash \
-        -c "./run -p $execute | tee run.log"
-        #-c "./run"
-
-    podman logs -f
-
-    echo "... done running $container."
-
-    podman exec \
-        -it \
-        "$container" \
-        bash
-
-    podman stop $container
-
-    podman rm $container
+        -c "bash $cmd ; bash"
 }
 
 if [ $build = true ]; then
     build
 fi
 
-if [ $execute = false ]; then
-    run
+if [ -n "$execute" ]; then
+    execute "$execute"
+elif [ -n "$project" ]; then
+    execute "./run -p $project | tee run.log"
 else
-    execute
+    run
 fi
