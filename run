@@ -71,6 +71,9 @@ case "$project" in
     basic_federation)
         generic_run
         ;;
+    netns_client_server)
+        generic_run
+        ;;
     *)
         echo "project $project not recognized"
         exit 1

@@ -1,0 +1,12 @@
+<config>
+    <entry  type='prerouting'
+            packetFilter='has(Ipv4Header) &amp;&amp; Ipv4Header.destAddress.str() == "192.168.2.99" &amp;&amp; Ipv4Header.srcAddress.str() == "192.168.2.20"
+                &amp;&amp; has(TcpHeader) &amp;&amp; TcpHeader.destPort == 4004 '
+            srcAddress='192.168.3.99'
+            destAddress='192.168.3.20'/>
+    <entry  type='prerouting'
+            packetFilter='has(Ipv4Header) &amp;&amp; Ipv4Header.destAddress.str() == "192.168.3.99" &amp;&amp; Ipv4Header.srcAddress.str() == "192.168.3.20"
+                &amp;&amp; has(TcpHeader) &amp;&amp; TcpHeader.destPort == 4004 '
+            srcAddress='192.168.2.99'
+            destAddress='192.168.2.20'/>
+</config>
