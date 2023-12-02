@@ -74,6 +74,9 @@ case "$project" in
     netns_client_server)
         generic_run
         ;;
+    socat_netns)
+        generic_run
+        ;;
     *)
         echo "project $project not recognized"
         exit 1
