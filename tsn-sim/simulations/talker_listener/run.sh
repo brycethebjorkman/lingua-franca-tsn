@@ -2,6 +2,12 @@
 
 echo "\n\n\n Starting talker_listener simulation...\n\n"
 
+mkdir results
+
+dumpcap -i lo -a duration:100 -w results/lo.pcap -p &
+dumpcap -i tapa -a duration:100 -w results/tapa.pcap -p &
+dumpcap -i tapb -a duration:100 -w results/tapb.pcap -p &
+
 # # some variation of this should be workable as an alternative to calling the executable OMNeT++ generates in the src directory
 # inet -u Cmdenv \
 #        -f $LINGUA_FRANCA_TSN_ROOT/tsn-sim/simulations/talker_listener/omnetpp.ini \

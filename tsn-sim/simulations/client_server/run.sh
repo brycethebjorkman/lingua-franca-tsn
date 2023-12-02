@@ -2,6 +2,12 @@
 
 echo -e "\n\n\n Starting client_server simulation...\n\n"
 
+mkdir results
+
+dumpcap -i lo -a duration:100 -w results/lo.pcap -p &
+dumpcap -i tapa -a duration:100 -w results/tapa.pcap -p &
+dumpcap -i tapb -a duration:100 -w results/tapb.pcap -p &
+
 $LINGUA_FRANCA_TSN_ROOT/tsn-sim/src/tsn-sim -m \
     -n $LINGUA_FRANCA_TSN_ROOT/tsn-sim/simulations \
     -n $LINGUA_FRANCA_TSN_ROOT/tsn-sim/src \
