@@ -82,7 +82,9 @@ WORKDIR /usr/app
 
 # to support distributed execution, [install the lingua-franca RTI](https://www.lf-lang.org/docs/handbook/distributed-execution?target=py#installation-of-the-rti)
 RUN git clone https://github.com/lf-lang/reactor-c.git && \
-    cd reactor-c/core/federated/RTI/ && \
+    cd reactor-c && \
+    git checkout 89aa9b8 && \
+    cd core/federated/RTI/ && \
     mkdir build && cd build && \
     cmake ../ && \
     make && \
