@@ -11,7 +11,7 @@ import inet.visualizer.common.IntegratedVisualizer;
 network BasicFederation
 {
     parameters:
-        @display("bgb=1036.63,611.185");
+        @display("bgb=1036.1,652.6");
     submodules:
         configurator: Ipv4NetworkConfigurator {
             parameters:
@@ -21,38 +21,48 @@ network BasicFederation
             parameters:
                 @display("p=100,200;is=s");
         }
-        switch1: EthernetSwitch {
+        localhost: StandardHost {
             parameters:
-                @display("p=298.69,425.44498");
+                @display("p=860.6,353.6");
         }
-        switch2: EthernetSwitch {
-            parameters:
-                @display("p=699.035,425.44498");
-        }
-        router: Router {
-            parameters:
-                @display("p=499.49,425.44498");
+        RTI: StandardHost {
+            @display("p=499.19998,139.09999");
         }
         Federate_c: StandardHost {
             parameters:
-                @display("p=99.145,425.44498");
+                @display("p=165.09999,353.6");
         }
         Federate_p: StandardHost {
             parameters:
-                @display("p=899.83496,425.44498");
+                @display("p=499.19998,598");
         }
-        RTI: StandardHost {
-            @display("p=499.49,222.135");
+        switch1: EthernetSwitch {
+            parameters:
+                @display("p=687.7,352.3");
+        }
+        switch2: EthernetSwitch {
+            parameters:
+                @display("p=499.19998,260");
         }
         switch3: EthernetSwitch {
             parameters:
-                @display("p=499.49,330.065");
+                @display("p=340.6,352.3");
+        }
+        switch4: EthernetSwitch {
+            parameters:
+                @display("p=499.19998,474.5");
+        }
+        switch5: EthernetSwitch {
+            parameters:
+                @display("p=499.19998,352.3");
         }
     connections:
-        Federate_c.ethg++ <--> Eth100M <--> switch1.ethg++;
-        switch1.ethg++ <--> Eth100M <--> router.ethg++;
-        router.ethg++ <--> Eth100M <--> switch2.ethg++;
-        switch2.ethg++ <--> Eth100M <--> Federate_p.ethg++;
-        RTI.ethg++ <--> Eth100M <--> switch3.ethg++;
-        switch3.ethg++ <--> Eth100M <--> router.ethg++;
+        localhost.ethg++ <--> Eth100M <--> switch1.ethg++;
+        switch1.ethg++ <--> Eth100M <--> switch5.ethg++;
+        RTI.ethg++ <--> Eth100M <--> switch2.ethg++;
+        switch2.ethg++ <--> Eth100M <--> switch5.ethg++;
+        Federate_c.ethg++ <--> Eth100M <--> switch3.ethg++;
+        switch3.ethg++ <--> Eth100M <--> switch5.ethg++;
+        Federate_p.ethg++ <--> Eth100M <--> switch4.ethg++;
+        switch4.ethg++ <--> Eth100M <--> switch5.ethg++;
 }
