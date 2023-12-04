@@ -90,6 +90,17 @@ RUN git clone https://github.com/lf-lang/reactor-c.git && \
     make && \
     make install
 
+RUN wget https://cloud-images.ubuntu.com/jammy/20231027/jammy-server-cloudimg-amd64-disk-kvm.img
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    cloud-image-utils \
+    && apt-get clean
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    qemu-kvm \
+    bridge-utils \
+    && apt-get clean
+
 # remove the source code for the lingua-franca test projects to prevent the lfc tool from seeing them as conflicts
 RUN rm -r lingua-franca/test
 
