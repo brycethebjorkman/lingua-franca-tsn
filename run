@@ -80,6 +80,9 @@ case "$project" in
     tsn_talker_listener)
         generic_run
         ;;
+    five_host)
+        generic_run
+        ;;
     *)
         echo "project $project not recognized"
         exit 1
