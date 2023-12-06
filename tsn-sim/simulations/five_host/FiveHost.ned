@@ -20,6 +20,10 @@ network FiveHost
             parameters:
                 @display("p=100,200;is=s");
         }
+        localhost: StandardHost {
+            parameters:
+                @display("p=498.56,598.27203");
+        }
         host1: StandardHost {
             parameters:
                 @display("p=279.456,123.328");
@@ -75,4 +79,5 @@ network FiveHost
         switch3.ethg++ <--> Eth100M <--> switch0.ethg++;
         switch4.ethg++ <--> Eth100M <--> switch0.ethg++;
         switch5.ethg++ <--> Eth100M <--> switch0.ethg++;
+        localhost.ethg++ <--> Eth100M <--> switch0.ethg++;
 }

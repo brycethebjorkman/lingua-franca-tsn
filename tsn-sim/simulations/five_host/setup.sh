@@ -3,6 +3,7 @@
 # configure network and SSH
 
 # create interfaces
+ip tuntap add mode tap dev tap_l
 ip tuntap add mode tap dev tap1
 ip tuntap add mode tap dev tap2
 ip tuntap add mode tap dev tap3
@@ -24,6 +25,7 @@ ip link set tap4 netns ns4
 ip link set tap5 netns ns5
 
 # bring up interfaces
+ip link set dev tap_l up
 nsenter --net=/run/netns/ns1 ip link set dev tap1 up
 nsenter --net=/run/netns/ns2 ip link set dev tap2 up
 nsenter --net=/run/netns/ns3 ip link set dev tap3 up
@@ -31,12 +33,14 @@ nsenter --net=/run/netns/ns4 ip link set dev tap4 up
 nsenter --net=/run/netns/ns5 ip link set dev tap5 up
 
 # assign IP addresses to interfaces
+l_ip="192.168.2.254"
 ip1="192.168.2.1"
 ip2="192.168.2.2"
 ip3="192.168.2.3"
 ip4="192.168.2.4"
 ip5="192.168.2.5"
 
+ip addr add "$l_ip"/24 dev tap_l
 nsenter --net=/run/netns/ns1 ip addr add "$ip1"/24 dev tap1
 nsenter --net=/run/netns/ns2 ip addr add "$ip2"/24 dev tap2
 nsenter --net=/run/netns/ns3 ip addr add "$ip3"/24 dev tap3
@@ -54,12 +58,14 @@ touch "$authorized_keys"
 chmod 700 /root/.ssh
 chmod 600 /root/.ssh/known_hosts
 
+l_key="/root/.ssh/localhost_key"
 key1="/root/.ssh/key1"
 key2="/root/.ssh/key2"
 key3="/root/.ssh/key3"
 key4="/root/.ssh/key4"
 key5="/root/.ssh/key5"
 
+ssh-keygen -t ed25519 -C "$l_ip" -f "$l_key" -N ""
 ssh-keygen -t ed25519 -C "$ip1" -f "$key1" -N ""
 ssh-keygen -t ed25519 -C "$ip2" -f "$key2" -N ""
 ssh-keygen -t ed25519 -C "$ip3" -f "$key3" -N ""
@@ -70,6 +76,10 @@ touch ~/.ssh/config
 chmod 600 ~/.ssh/config
 
 cat << EOF > ~/.ssh/config
+Host localhost $l_ip
+    HostName $l_ip
+    IdentityFile $l_key
+
 Host host1 $ip1
     HostName $ip1
     IdentityFile $key1
@@ -92,23 +102,35 @@ Host host5 $ip5
 
 EOF
 
+l_pub=$(<"$l_key.pub")
 pub1=$(<"$key1.pub")
 pub2=$(<"$key2.pub")
 pub3=$(<"$key3.pub")
 pub4=$(<"$key4.pub")
 pub5=$(<"$key5.pub")
 
+echo "$l_pub" >> "$authorized_keys"
 echo "$pub1" >> "$authorized_keys"
 echo "$pub2" >> "$authorized_keys"
 echo "$pub3" >> "$authorized_keys"
 echo "$pub4" >> "$authorized_keys"
 echo "$pub5" >> "$authorized_keys"
 
+echo "$l_ip $l_pub" >> "$known_hosts"
 echo "$ip1 $pub1" >> "$known_hosts"
 echo "$ip2 $pub2" >> "$known_hosts"
 echo "$ip3 $pub3" >> "$known_hosts"
 echo "$ip4 $pub4" >> "$known_hosts"
 echo "$ip5 $pub5" >> "$known_hosts"
+
+cat << EOF > /etc/ssh/sshd_config.d/localhost.conf
+AllowTcpForwarding yes
+GatewayPorts yes
+HostKey $l_key
+ListenAddress $l_ip
+PasswordAuthentication no
+PermitRootLogin yes
+EOF
 
 cat << EOF > /etc/ssh/sshd_config.d/host1.conf
 AllowTcpForwarding yes
