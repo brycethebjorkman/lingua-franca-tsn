@@ -83,6 +83,9 @@ case "$project" in
     five_host)
         generic_run
         ;;
+    star_tree)
+        generic_run
+        ;;
     *)
         echo "project $project not recognized"
         exit 1
