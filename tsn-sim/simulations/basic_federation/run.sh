@@ -15,7 +15,7 @@ cp /usr/app/fed-gen/BasicFederation/bin/federate__c /root/LinguaFrancaRemote/bin
 cp /usr/app/fed-gen/BasicFederation/bin/federate__p /root/LinguaFrancaRemote/bin/BasicFederation_federate__p
 popd > /dev/null
 
-mkdir results
+mkdir -p results
 
 dumpcap -i lo -a duration:120 -w results/lo.pcap -p &
 dumpcap -i tap_l -a duration:120 -w results/tap_l.pcap -p &

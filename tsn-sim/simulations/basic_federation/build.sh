@@ -11,6 +11,6 @@ opp_makemake -f --deep -KINET4_5_PROJ=/root/inet4.5 -DINET_IMPORT -L$\(INET4_5_P
 make MODE=release -j20 all
 
 # make Lingua Franca reactor
-cd "$src_dir/basic-federation"
+cd "$LINGUA_FRANCA_TSN_ROOT/src/basic-federation"
 stdbuf -i 0 -o 0 -e 0 \
 lfc BasicFederation.lf
